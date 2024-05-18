@@ -1,0 +1,23 @@
+debug: true
+dbConfigs:
+  usercenter:
+    connectionStr: "root:123456@(127.0.0.1:3306)/SwiftEase?charset=utf8mb4&parseTime=True&loc=Local"
+    dbType: "mysql"
+  curd:
+    fileName: "./SwiftEase.s3db"
+    dbType: "sqlite"
+token:
+  key: "key"
+  redisAddr: ""
+  redisUserName: ""
+  redisPwd: ""
+  expired: 86400
+superAdminRoleID: "superAdminRoleID"
+platformTenantID: "platformTenantID"
+defaultRoleID: defaultRoleID
+defaultPwd: ABC123def
+miniApp:
+  - id: ""
+    name: ""
+    secret: ""
+    tenantID: ""

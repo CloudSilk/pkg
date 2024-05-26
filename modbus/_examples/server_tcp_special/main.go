@@ -6,7 +6,7 @@ import (
 	_ "net/http/pprof"
 	"time"
 
-	modbus "github.com/nooocode/pkg/modbus"
+	modbus "github.com/CloudSilk/pkg/modbus"
 )
 
 func main() {

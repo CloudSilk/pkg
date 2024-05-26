@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	modbus "github.com/nooocode/pkg/modbus"
-	modbus2 "github.com/nooocode/pkg/protocol/modbus"
+	modbus "github.com/CloudSilk/pkg/modbus"
+	modbus2 "github.com/CloudSilk/pkg/protocol/modbus"
 )
 
 const serverAddr = "192.168.1.128:10020"

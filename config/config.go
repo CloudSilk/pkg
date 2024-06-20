@@ -34,6 +34,10 @@ func NewDB(name string) (bool, db.DBClientInterface) {
 	if !ok {
 		return false, nil
 	}
+	return NewDBByConfig(dbConfig)
+}
+
+func NewDBByConfig(dbConfig *DBConfig) (bool, db.DBClientInterface) {
 	switch dbConfig.DBType {
 	case "mysql":
 		if dbConfig.ConnectionStr != "" {
@@ -47,7 +51,7 @@ func NewDB(name string) (bool, db.DBClientInterface) {
 		} else {
 			return true, sqlite.NewSqlite2(dbConfig.UserName, dbConfig.Password, dbConfig.FileName, dbConfig.DBName, DefaultConfig.Debug)
 		}
-	case "postgres":
+	case "postgres", "questdb":
 		if dbConfig.ConnectionStr != "" {
 			return true, postgres.NewPostgres(dbConfig.ConnectionStr, DefaultConfig.Debug)
 		} else {

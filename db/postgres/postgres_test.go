@@ -1,7 +1,9 @@
 package postgres
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/CloudSilk/pkg/db"
 	"gorm.io/gorm"
@@ -10,9 +12,40 @@ import (
 var pg db.DBClientInterface
 
 func init() {
-	pg = NewPostgres("postgresql://postgres:123456@127.0.0.1:5432/test", true)
+	// pg = NewPostgres("postgresql://postgres:123456@127.0.0.1:5432/test", true)
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s",
+		"127.0.0.1",
+		"admin",
+		"quest",
+		"station",
+		"8812",
+	)
+	pg = NewPostgres(dsn, true)
 }
 
+type Tracker struct {
+	Timestamp time.Time `gorm:"type:timestamp" json:"timestamp"`
+	VehicleId int       `gorm:"type:int" json:"vehicleId"`
+	Latitude  float64   `gorm:"type:double" json:"latitude"`
+	Longitude float64   `gorm:"type:double" json:"longitude"`
+}
+
+func TestQuestdb(t *testing.T) {
+	pg.DB().AutoMigrate(&Tracker{})
+	pg.DB().Create(&Tracker{
+		Timestamp: time.Now().UTC(),
+		VehicleId: 1,
+		Latitude:  -7.626923,
+		Longitude: 111.5213978,
+	})
+	var list []Tracker
+	records, pages, err := pg.PageQuery(pg.DB().Model(&Tracker{}), 10, 1, "", &list, "*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(records, pages)
+}
 func TestAutoMigrate(t *testing.T) {
 	pg.DB().AutoMigrate(&Location{}, &LocationTag{}, &LocationFile{})
 }
@@ -59,7 +92,7 @@ func TestAdd(t *testing.T) {
 
 func TestQueryPage(t *testing.T) {
 	var locations []Location
-	_, _, err := pg.PageQuery(pg.DB().Model(&Location{}), 10, 1, "name", &locations)
+	_, _, err := pg.PageQuery(pg.DB().Model(&Location{}), 10, 1, "name", &locations, "*")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -75,8 +108,14 @@ func TestQueryPage(t *testing.T) {
 	}
 }
 
+type Model struct {
+	ID        string         `gorm:"type:varchar"`
+	CreatedAt time.Time      `gorm:"type:timestamp"`
+	UpdatedAt time.Time      `gorm:"type:timestamp"`
+	DeletedAt gorm.DeletedAt `gorm:"type:timestamp"`
+}
 type Location struct {
-	gorm.Model
+	Model
 	Name     string
 	Code     string
 	ParentID uint
@@ -85,13 +124,13 @@ type Location struct {
 }
 
 type LocationTag struct {
-	gorm.Model
+	Model
 	LocationID uint
 	Name       string
 }
 
 type LocationFile struct {
-	gorm.Model
+	Model
 	LocationID uint
 	FileID     string
 }

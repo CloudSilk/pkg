@@ -11,7 +11,7 @@ import (
 type DBClientInterface interface {
 	Close()
 	DB() *gorm.DB
-	PageQuery(db *gorm.DB, pageSize, pageIndex int64, order string, result interface{}) (records int64, pages int64, err error)
+	PageQuery(db *gorm.DB, pageSize, pageIndex int64, order string, result, selects interface{}) (records int64, pages int64, err error)
 	PageQueryWithPreload(db *gorm.DB, pageSize, pageIndex int64, order string, preload []string, result interface{}) (records int64, pages int64, err error)
 	PageQueryWithAssociations(db *gorm.DB, pageSize, pageIndex int64, order string, result interface{}) (records int64, pages int64, err error)
 	CheckDuplication(db *gorm.DB, query interface{}, args ...interface{}) (bool, error)
@@ -62,7 +62,7 @@ func (m *DBClient) DB() *gorm.DB {
 }
 
 // PageQuery 分页查询
-func (m *DBClient) PageQuery(db *gorm.DB, pageSize, pageIndex int64, order string, result interface{}) (records int64, pages int64, err error) {
+func (m *DBClient) PageQuery(db *gorm.DB, pageSize, pageIndex int64, order string, result, selects interface{}) (records int64, pages int64, err error) {
 	err = db.Count(&records).Error
 	if err != nil {
 		return
@@ -83,7 +83,9 @@ func (m *DBClient) PageQuery(db *gorm.DB, pageSize, pageIndex int64, order strin
 
 	offset := pageSize * (pageIndex - 1)
 	db = db.Order(order).Offset(int(offset)).Limit(int(pageSize))
-
+	if selects != nil {
+		db = db.Select(selects)
+	}
 	db = db.Find(result)
 
 	if errors.Is(db.Error, gorm.ErrRecordNotFound) {

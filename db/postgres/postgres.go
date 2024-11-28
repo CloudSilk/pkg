@@ -10,7 +10,9 @@ import (
 
 // NewPostgres New Postgres
 func NewPostgres(connStr string, debug bool) db.DBClientInterface {
-	dbClient, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
+	dbClient, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
+		PrepareStmt: true,
+	})
 	if err != nil {
 		panic(err)
 	}

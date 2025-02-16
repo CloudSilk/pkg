@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/CloudSilk/pkg/db"
-	"github.com/glebarez/sqlite"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 

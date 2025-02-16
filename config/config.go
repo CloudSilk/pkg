@@ -47,7 +47,7 @@ func NewDBByConfig(dbConfig *DBConfig) (bool, db.DBClientInterface) {
 		}
 	case "sqlite":
 		if dbConfig.ConnectionStr != "" {
-			sqlite.NewSqlite(dbConfig.ConnectionStr, DefaultConfig.Debug)
+			return true, sqlite.NewSqlite(dbConfig.ConnectionStr, DefaultConfig.Debug)
 		} else {
 			return true, sqlite.NewSqlite2(dbConfig.UserName, dbConfig.Password, dbConfig.FileName, dbConfig.DBName, DefaultConfig.Debug)
 		}

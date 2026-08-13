@@ -78,10 +78,16 @@ func (sf *protocolFrame) encodeTCPFrame(tid uint16, slaveID byte,
 			length, tcpAduMaxSize)
 	}
 
+	// MBAP Length = bytes following the Length field: UnitID(1) + FuncCode(1) +
+	// Data, plus 2 CRC bytes when a checksum is appended.
+	lengthField := uint16(2 + len(pdu.Data))
+	if crc != CRCNone {
+		lengthField += 2
+	}
 	head := protocolTCPHeader{
 		tid,
 		tcpProtocolIdentifier,
-		uint16(2 + len(pdu.Data) + 2), // sizeof(SlaveId) + sizeof(FuncCode) + Data
+		lengthField,
 		slaveID,
 	}
 

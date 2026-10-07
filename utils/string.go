@@ -110,7 +110,7 @@ func BigCamelName(s string) string {
 		return "ID"
 	}
 	str := stringy.New(s)
-	return str.CamelCase()
+	return str.CamelCase().Get()
 }
 
 var NamingStrategy schema.NamingStrategy
